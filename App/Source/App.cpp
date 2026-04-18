@@ -17,6 +17,8 @@ SudokuApp::SudokuApp()
 	if (!wxApp::OnInit())
 		return false;
 
+	this->square.RandomlyGenerate(this->random);
+
 	this->frame = new SudokuFrame(wxDefaultPosition, wxSize(1600, 1200));
 	this->frame->Show();
 
@@ -26,4 +28,14 @@ SudokuApp::SudokuApp()
 /*virtual*/ int SudokuApp::OnExit()
 {
 	return 0;
+}
+
+SudokuSquare* SudokuApp::GetSquare()
+{
+	return &this->square;
+}
+
+Random* SudokuApp::GetRandom()
+{
+	return &this->random;
 }

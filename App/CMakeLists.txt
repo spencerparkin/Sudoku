@@ -5,6 +5,12 @@ set(SUDOKU_APP_SOURCES
 	Source/App.h
 	Source/Frame.cpp
 	Source/Frame.h
+	Source/Canvas.cpp
+	Source/Canvas.h
+	Source/SudokuSquare.cpp
+	Source/SudokuSquare.h
+	Source/Random.cpp
+	Source/Random.h
 )
 
 add_executable(Sudoku WIN32
