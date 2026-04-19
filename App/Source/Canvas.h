@@ -13,13 +13,19 @@ public:
 	SudokuCanvas(wxWindow* parent);
 	virtual ~SudokuCanvas();
 
+private:
 	void OnPaint(wxPaintEvent& event);
 	void OnResize(wxSizeEvent& event);
+	void OnMouseMotion(wxMouseEvent& event);
 
-private:
+	HappyMath::Vector2 MousePosToWorldPos(const wxPoint& mousePos) const;
+	bool CalcMatrixLocationFromWorldPos(const HappyMath::Vector2& worldPos, int& row, int& col) const;
+
 	wxGLContext* context;
 	static int attributeList[];
 	HappyMath::Rectangle worldRect;
 	HappyMath::Rectangle adjustedWorldRect;
+	HappyMath::Rectangle renderRect;
 	FontSys::System fontSystem;
+	int hoverRow, hoverCol;
 };

@@ -18,12 +18,12 @@ public:
 	virtual bool IsValid() const override;
 	virtual LatinSquare* Clone() const override;
 
-	void MakePuzzle(UU::Random& random, int difficultyLevel);
+	void MakePuzzle(UU::Random& random);
 	void Print() const;
 	void SaveToStream(wxOutputStream& outputStream) const;
 	bool LoadFromStream(wxInputStream& inputStream);
 	void Render(const HappyMath::Rectangle& renderRect, FontSys::System* fontSystem) const;
-	void CalcValueSquare(const HappyMath::Rectangle& renderRect, int row, int col, HappyMath::Rectangle& valueRect) const;
+	void CalcValueSquare(const HappyMath::Rectangle& renderRect, int row, int col, HappyMath::Rectangle& valueRect, double scale) const;
 
 protected:
 	virtual bool CanPlaceValueAtTargetLocation(int targetRow, int targetCol, int value) override;

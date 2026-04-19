@@ -1,9 +1,12 @@
 #include "Frame.h"
 #include "Canvas.h"
+#include "App.h"
+#include "SudokuSquare.h"
 #include <wx/sizer.h>
 #include <wx/menu.h>
+#include <wx/msgdlg.h>
 
-SudokuFrame::SudokuFrame(const wxPoint& position, const wxSize& size) : wxFrame(nullptr, wxID_ANY, wxT("Sudoku"), position, size)
+SudokuFrame::SudokuFrame(const wxPoint& position, const wxSize& size) : wxFrame(nullptr, wxID_ANY, wxT("Sudoku"), position, size), timer(this, ID_Timer)
 {
 	wxMenu* gameMenu = new wxMenu();
 	gameMenu->Append(new wxMenuItem(gameMenu, ID_NewPuzzle, wxT("New Puzzle"), wxT("Generate a new puzzle at the desired difficulty level.")));
@@ -30,6 +33,9 @@ SudokuFrame::SudokuFrame(const wxPoint& position, const wxSize& size) : wxFrame(
 	this->Bind(wxEVT_MENU, &SudokuFrame::OnNewPuzzle, this, ID_NewPuzzle);
 	this->Bind(wxEVT_MENU, &SudokuFrame::OnAbout, this, ID_About);
 	this->Bind(wxEVT_MENU, &SudokuFrame::OnExit, this, ID_Exit);
+	this->Bind(wxEVT_TIMER, &SudokuFrame::OnTimer, this, ID_Timer);
+
+	this->timer.Start(16);
 }
 
 /*virtual*/ SudokuFrame::~SudokuFrame()
@@ -38,6 +44,11 @@ SudokuFrame::SudokuFrame(const wxPoint& position, const wxSize& size) : wxFrame(
 
 void SudokuFrame::OnNewPuzzle(wxCommandEvent& event)
 {
+	SudokuSquare* square = wxGetApp().GetSquare();
+	if (!square)
+		return;
+
+	square->MakePuzzle(*wxGetApp().GetRandom());
 }
 
 void SudokuFrame::OnAbout(wxCommandEvent& event)
@@ -47,4 +58,9 @@ void SudokuFrame::OnAbout(wxCommandEvent& event)
 void SudokuFrame::OnExit(wxCommandEvent& event)
 {
 	this->Close(true);
+}
+
+void SudokuFrame::OnTimer(wxTimerEvent& event)
+{
+	this->canvas->Refresh();
 }

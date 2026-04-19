@@ -17,7 +17,7 @@ SudokuApp::SudokuApp()
 	if (!wxApp::OnInit())
 		return false;
 
-	this->square.RandomlyGenerate(this->random);
+	this->square.Clear();
 
 	this->frame = new SudokuFrame(wxDefaultPosition, wxSize(1600, 1200));
 	this->frame->Show();

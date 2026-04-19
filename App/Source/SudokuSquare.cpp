@@ -71,7 +71,7 @@ void SudokuSquare::Render(const HappyMath::Rectangle& renderRect, FontSys::Syste
 			std::string text = std::format("{}", value + 1);
 
 			HappyMath::Rectangle valueRect;
-			this->CalcValueSquare(renderRect, row, col, valueRect);
+			this->CalcValueSquare(renderRect, row, col, valueRect, 0.7);
 
 			fontSystem->SetLineHeight(valueRect.GetHeight());
 
@@ -87,7 +87,7 @@ void SudokuSquare::Render(const HappyMath::Rectangle& renderRect, FontSys::Syste
 	}
 }
 
-void SudokuSquare::CalcValueSquare(const HappyMath::Rectangle& renderRect, int row, int col, HappyMath::Rectangle& valueRect) const
+void SudokuSquare::CalcValueSquare(const HappyMath::Rectangle& renderRect, int row, int col, HappyMath::Rectangle& valueRect, double scale) const
 {
 	double width = renderRect.GetWidth() / 9.0;
 	double height = renderRect.GetHeight() / 9.0;
@@ -98,8 +98,8 @@ void SudokuSquare::CalcValueSquare(const HappyMath::Rectangle& renderRect, int r
 	valueRect.maxCorner.x = valueRect.minCorner.x + width;
 	valueRect.maxCorner.y = valueRect.minCorner.y + height;
 
-	valueRect.ScaleHorizontally(0.7);
-	valueRect.ScaleVertically(0.7);
+	valueRect.ScaleHorizontally(scale);
+	valueRect.ScaleVertically(scale);
 }
 
 void SudokuSquare::SaveToStream(wxOutputStream& outputStream) const
@@ -225,7 +225,7 @@ void SudokuSquare::Print() const
 	}
 }
 
-void SudokuSquare::MakePuzzle(UU::Random& random, int difficultyLevel)
+void SudokuSquare::MakePuzzle(UU::Random& random)
 {
 	this->RandomlyGenerate(random);
 
@@ -242,44 +242,24 @@ void SudokuSquare::MakePuzzle(UU::Random& random, int difficultyLevel)
 
 	random.Shuffle(locationArray.GetBuffer(), locationArray.GetSize());
 
-	this->Clear();
-
-	int delta = this->size / 4;
-	int fillLocation = 0;
-	int fillLocationTarget = this->size / 2;
-
-	// STPTODO: This is a sketch of an idea.  Not yet tested.
-	while (delta > 0)
+	int i = 0;
+	while (true)
 	{
-		while (fillLocation != fillLocationTarget)
-		{
-			if (fillLocation < fillLocationTarget)
-			{
-				const Location& location = locationArray[fillLocation];
-				this->matrix[location.row][location.col] = location.value;
-				fillLocation++;
-			}
-			else
-			{
-				fillLocation--;
-				const Location& location = locationArray[fillLocation];
-				this->matrix[location.row][location.col] = -1;
-			}
-		}
-
 		SudokuSquare* sudokuSquare = (SudokuSquare*)this->Clone();
-		int numBacktracks = 0;
-		sudokuSquare->CompleteSquare(&numBacktracks);
+		bool solved = sudokuSquare->CompleteSquare(true);
 		delete sudokuSquare;
 
-		if (numBacktracks < difficultyLevel)
-			fillLocationTarget -= delta;
-		else if (numBacktracks > difficultyLevel)
-			fillLocationTarget += delta;
+		if (solved)
+		{
+			const Location& location = locationArray[i++];
+			this->matrix[location.row][location.col] = -1;
+		}
 		else
+		{
+			const Location& location = locationArray[--i];
+			this->matrix[location.row][location.col] = location.value;
 			break;
-
-		delta /= 2;
+		}
 	}
 }
 
