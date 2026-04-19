@@ -232,11 +232,11 @@ void SudokuSquare::Print() const
 // For example, for an empty square, it has a set of empty square
 // influences in its row.  If none of those influential squares can
 // take on a value that it itself holds as a possibility, then that
-// possibility can be eliminated.  We do this also, of course, for
+// possibility must be the only one for the empty square.  We do this also, of course, for
 // all influences the empty square has in its column and its 3x3 sub-square.
 // Our algorithm here should make passes over the entire sudoku puzzle
 // until a single pass of the entire puzzle does not yield any reductions.
-// This approach might encompass my current approach as a proper subset.
+// Are there any other reasonings we can make in this fasion?
 
 void SudokuSquare::MakePuzzle(UU::Random& random)
 {
