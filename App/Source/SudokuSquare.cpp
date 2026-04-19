@@ -259,7 +259,7 @@ void SudokuSquare::MakePuzzle(UU::Random& random)
 	while (true)
 	{
 		SudokuSquare* sudokuSquare = (SudokuSquare*)this->Clone();
-		bool solved = sudokuSquare->CompleteSquare(true);
+		bool solved = sudokuSquare->CompleteSquare(true);		// STPTODO: Replace with smart or dumb solver to set difficulty level.
 		delete sudokuSquare;
 
 		if (solved)
