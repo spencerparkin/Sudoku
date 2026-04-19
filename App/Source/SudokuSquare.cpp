@@ -225,6 +225,19 @@ void SudokuSquare::Print() const
 	}
 }
 
+// There is a stratagy for solving these puzzles algorithmically that
+// I have not yet tried.  It is as follows.  First, calculate the possibilities
+// for each empty square just as I currently am.  We then make passes
+// over all the empty squares trying to reduces those possibilities.
+// For example, for an empty square, it has a set of empty square
+// influences in its row.  If none of those influential squares can
+// take on a value that it itself holds as a possibility, then that
+// possibility can be eliminated.  We do this also, of course, for
+// all influences the empty square has in its column and its 3x3 sub-square.
+// Our algorithm here should make passes over the entire sudoku puzzle
+// until a single pass of the entire puzzle does not yield any reductions.
+// This approach might encompass my current approach as a proper subset.
+
 void SudokuSquare::MakePuzzle(UU::Random& random)
 {
 	this->RandomlyGenerate(random);
