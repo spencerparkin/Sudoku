@@ -17,6 +17,9 @@ SudokuApp::SudokuApp()
 	if (!wxApp::OnInit())
 		return false;
 
+	std::random_device randomDevice;
+	this->random.SetSeed(randomDevice());
+
 	this->square.Clear();
 
 	this->frame = new SudokuFrame(wxDefaultPosition, wxSize(1600, 1200));

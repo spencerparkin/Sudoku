@@ -7,6 +7,7 @@
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/choicdlg.h>
+#include <wx/aboutdlg.h>
 #include <memory>
 
 SudokuFrame::SudokuFrame(const wxPoint& position, const wxSize& size) : wxFrame(nullptr, wxID_ANY, wxT("Sudoku"), position, size), timer(this, ID_Timer)
@@ -90,6 +91,13 @@ void SudokuFrame::OnNewPuzzle(wxCommandEvent& event)
 
 void SudokuFrame::OnAbout(wxCommandEvent& event)
 {
+	wxAboutDialogInfo info;
+	info.SetName(wxT("Sudoku"));
+	info.SetVersion(wxT("1.0.0"));
+	info.SetDescription(wxT("This is a basic Sudoku puzzle application."));
+	info.SetCopyright("(C) 2026 Spencer T. Parkin <spencer.parkin@proton.me>");
+
+	wxAboutBox(info);
 }
 
 void SudokuFrame::SetStatusText(const wxString& text)
@@ -112,6 +120,8 @@ void SudokuFrame::OnSolvePuzzle(wxCommandEvent& event)
 	SudokuSquare* square = wxGetApp().GetSquare();
 	if (!square)
 		return;
+
+	square->Copy(wxGetApp().GetOriginalSquare());
 
 	AdvancedSudokuSolver solver;
 	bool solved = solver.Solve(square);
