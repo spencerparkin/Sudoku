@@ -226,7 +226,7 @@ void SudokuSquare::Print() const
 	}
 }
 
-void SudokuSquare::MakePuzzle(UU::Random& random, SudokuSolver* solver)
+void SudokuSquare::MakePuzzle(UU::Random& random, SudokuSolver* solver, int puzzleSizeLowerBound)
 {
 	this->RandomlyGenerate(random);
 
@@ -236,34 +236,46 @@ void SudokuSquare::MakePuzzle(UU::Random& random, SudokuSolver* solver)
 		int value;
 	};
 
-	UU::DArray<Location> locationArray;
-	for (int row = 0; row < this->size; row++)
-		for (int col = 0; col < this->size; col++)
-			locationArray.Push({ row, col, this->matrix[row][col] });
-
-	random.Shuffle(locationArray.GetBuffer(), locationArray.GetSize());
-
-	// STPTODO: We could do better here if we tried to remove more numbers.
-	//          If removing a number causes the solver to fail, then try to
-	//          remove some other number.  Remove as much as we possibly can.
-	int i = 0;
 	while (true)
 	{
-		SudokuSquare* sudokuSquare = (SudokuSquare*)this->Clone();
-		bool solved = solver->Solve(sudokuSquare);
-		delete sudokuSquare;
+		UU::DArray<Location> locationArray;
 
-		if (solved)
+		for (int row = 0; row < this->size; row++)
 		{
-			const Location& location = locationArray[i++];
+			for (int col = 0; col < this->size; col++)
+			{
+				int value = this->matrix[row][col];
+				if (value == -1)
+					continue;
+
+				locationArray.Push({ row, col, value });
+			}
+		}
+
+		if (locationArray.GetSize() <= puzzleSizeLowerBound)
+			return;
+
+		random.Shuffle(locationArray.GetBuffer(), locationArray.GetSize());
+
+		int numSetValues = this->GetNumSetValues();
+
+		for (int i = 0; i < (int)locationArray.GetSize(); i++)
+		{
+			const Location& location = locationArray[i];
 			this->matrix[location.row][location.col] = -1;
-		}
-		else
-		{
-			const Location& location = locationArray[--i];
+
+			SudokuSquare* sudokuSquare = (SudokuSquare*)this->Clone();
+			bool solved = solver->Solve(sudokuSquare);
+			delete sudokuSquare;
+
+			if (solved)
+				break;
+
 			this->matrix[location.row][location.col] = location.value;
-			break;
 		}
+
+		if (this->GetNumSetValues() == numSetValues)
+			break;
 	}
 }
 

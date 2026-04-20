@@ -30,6 +30,11 @@ SudokuApp::SudokuApp()
 	return 0;
 }
 
+SudokuFrame* SudokuApp::GetFrame()
+{
+	return this->frame;
+}
+
 SudokuSquare* SudokuApp::GetSquare()
 {
 	return &this->square;

@@ -20,7 +20,7 @@ public:
 	virtual bool IsValid() const override;
 	virtual LatinSquare* Clone() const override;
 
-	void MakePuzzle(UU::Random& random, SudokuSolver* solver);
+	void MakePuzzle(UU::Random& random, SudokuSolver* solver, int puzzleSizeLowerBound);
 	void Print() const;
 	void SaveToStream(wxOutputStream& outputStream) const;
 	bool LoadFromStream(wxInputStream& inputStream);

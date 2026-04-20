@@ -27,9 +27,6 @@ SimpleSudokuSolver::SimpleSudokuSolver()
 	{
 		if (this->ResolveAnyValue(square))
 			continue;
-		
-		if (square->CompleteSquare(true))
-			continue;
 			
 		return false;
 	}

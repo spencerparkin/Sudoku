@@ -13,6 +13,7 @@ SudokuFrame::SudokuFrame(const wxPoint& position, const wxSize& size) : wxFrame(
 {
 	wxMenu* gameMenu = new wxMenu();
 	gameMenu->Append(new wxMenuItem(gameMenu, ID_NewPuzzle, wxT("New Puzzle"), wxT("Generate a new puzzle at the desired difficulty level.")));
+	gameMenu->Append(new wxMenuItem(gameMenu, ID_SolvePuzzle, wxT("Solve Puzzle"), wxT("Let the computer try to solve the puzzle.")));
 	gameMenu->AppendSeparator();
 	gameMenu->Append(new wxMenuItem(gameMenu, ID_Exit, wxT("Exit"), wxT("Go do something else with your life.")));
 
@@ -34,6 +35,7 @@ SudokuFrame::SudokuFrame(const wxPoint& position, const wxSize& size) : wxFrame(
 	this->SetSizer(boxSizer);
 
 	this->Bind(wxEVT_MENU, &SudokuFrame::OnNewPuzzle, this, ID_NewPuzzle);
+	this->Bind(wxEVT_MENU, &SudokuFrame::OnSolvePuzzle, this, ID_SolvePuzzle);
 	this->Bind(wxEVT_MENU, &SudokuFrame::OnAbout, this, ID_About);
 	this->Bind(wxEVT_MENU, &SudokuFrame::OnExit, this, ID_Exit);
 	this->Bind(wxEVT_TIMER, &SudokuFrame::OnTimer, this, ID_Timer);
@@ -53,6 +55,7 @@ void SudokuFrame::OnNewPuzzle(wxCommandEvent& event)
 
 	wxArrayString choiceArray;
 	choiceArray.Add("Easy");
+	choiceArray.Add("Medium");
 	choiceArray.Add("Hard");
 
 	wxSingleChoiceDialog choiceDialog(this, wxT("Please select difficulty level."), wxT("Difficulty Level"), choiceArray);
@@ -60,17 +63,36 @@ void SudokuFrame::OnNewPuzzle(wxCommandEvent& event)
 		return;
 
 	std::unique_ptr<SudokuSolver> solver;
+	int puzzleSizeLowerBound = 0;
 
-	if (choiceDialog.GetSelection() == 0)
+	int choice = choiceDialog.GetSelection();
+	
+	switch (choice)
+	{
+	case 0:
 		solver.reset(new SimpleSudokuSolver());
-	else
+		puzzleSizeLowerBound = 40;
+		break;
+	case 1:
+		solver.reset(new SimpleSudokuSolver());
+		puzzleSizeLowerBound = 20;
+		break;
+	case 2:
 		solver.reset(new AdvancedSudokuSolver());
+		puzzleSizeLowerBound = 15;
+		break;
+	}
 
-	square->MakePuzzle(*wxGetApp().GetRandom(), solver.get());
+	square->MakePuzzle(*wxGetApp().GetRandom(), solver.get(), puzzleSizeLowerBound);
 }
 
 void SudokuFrame::OnAbout(wxCommandEvent& event)
 {
+}
+
+void SudokuFrame::SetStatusText(const wxString& text)
+{
+	this->GetStatusBar()->SetLabelText(text);
 }
 
 void SudokuFrame::OnExit(wxCommandEvent& event)
@@ -81,4 +103,18 @@ void SudokuFrame::OnExit(wxCommandEvent& event)
 void SudokuFrame::OnTimer(wxTimerEvent& event)
 {
 	this->canvas->Refresh();
+}
+
+void SudokuFrame::OnSolvePuzzle(wxCommandEvent& event)
+{
+	SudokuSquare* square = wxGetApp().GetSquare();
+	if (!square)
+		return;
+
+	AdvancedSudokuSolver solver;
+	bool solved = solver.Solve(square);
+	if (!solved)
+	{
+		wxMessageBox(wxT("The computer failed to solve the puzzle!  Hmmm...something went wrong."), wxT("Error!"), wxOK | wxICON_ERROR, this);
+	}
 }

@@ -18,6 +18,7 @@ public:
 	virtual bool OnInit() override;
 	virtual int OnExit() override;
 
+	SudokuFrame* GetFrame();
 	SudokuSquare* GetSquare();
 	Random* GetRandom();
 

@@ -1,5 +1,6 @@
 #include "Canvas.h"
 #include "App.h"
+#include "Frame.h"
 #include "SudokuSquare.h"
 #include <gl/GLU.h>
 
@@ -40,7 +41,28 @@ void SudokuCanvas::OnMouseMotion(wxMouseEvent& event)
 		return;
 
 	HappyMath::Vector2 worldPos = this->MousePosToWorldPos(event.GetPosition());
-	this->CalcMatrixLocationFromWorldPos(worldPos, this->hoverRow, this->hoverCol);
+	if (this->CalcMatrixLocationFromWorldPos(worldPos, this->hoverRow, this->hoverCol))
+	{
+		wxString text;
+
+		int value = -1;
+		square->GetValue(this->hoverRow, this->hoverCol, value);
+		if (value == -1)
+		{
+			UU::DArray<int> possibleValuesArray;
+			square->GetAllPossibleValuesForLocation(this->hoverRow, this->hoverCol, possibleValuesArray);
+
+			text = wxT("Possible values: ");
+			for (int i = 0; i < (int)possibleValuesArray.GetSize(); i++)
+			{
+				text += wxString::Format("%d", possibleValuesArray[i] + 1);
+				if (i + 1 < (int)possibleValuesArray.GetSize())
+					text += wxT(", ");
+			}
+		}
+
+		wxGetApp().GetFrame()->SetStatusText(text);
+	}
 }
 
 bool SudokuCanvas::CalcMatrixLocationFromWorldPos(const HappyMath::Vector2& worldPos, int& row, int& col) const
