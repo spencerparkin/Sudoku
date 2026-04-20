@@ -84,6 +84,8 @@ void SudokuFrame::OnNewPuzzle(wxCommandEvent& event)
 	}
 
 	square->MakePuzzle(*wxGetApp().GetRandom(), solver.get(), puzzleSizeLowerBound);
+
+	wxGetApp().SetOriginalSquare();
 }
 
 void SudokuFrame::OnAbout(wxCommandEvent& event)

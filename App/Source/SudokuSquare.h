@@ -2,8 +2,10 @@
 
 #include "UltraUtilities/Math/LatinSquare.h"
 #include "HappyMath/Rectangle.h"
+#include "HappyMath/Vector3.h"
 #include "FontSystem.h"
 #include <wx/stream.h>
+#include <functional>
 
 class SudokuSolver;
 
@@ -24,7 +26,7 @@ public:
 	void Print() const;
 	void SaveToStream(wxOutputStream& outputStream) const;
 	bool LoadFromStream(wxInputStream& inputStream);
-	void Render(const HappyMath::Rectangle& renderRect, FontSys::System* fontSystem) const;
+	void Render(const HappyMath::Rectangle& renderRect, FontSys::System* fontSystem, std::function<HappyMath::Vector3(int, int)> colorFunc) const;
 	void CalcValueSquare(const HappyMath::Rectangle& renderRect, int row, int col, HappyMath::Rectangle& valueRect, double scale) const;
 
 protected:

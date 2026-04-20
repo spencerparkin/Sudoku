@@ -20,11 +20,14 @@ public:
 
 	SudokuFrame* GetFrame();
 	SudokuSquare* GetSquare();
+	const SudokuSquare* GetOriginalSquare() const;
 	Random* GetRandom();
+	void SetOriginalSquare();
 
 private:
 	SudokuFrame* frame;
 	SudokuSquare square;
+	SudokuSquare originalSquare;
 	Random random;
 };
 

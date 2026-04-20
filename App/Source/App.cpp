@@ -35,6 +35,11 @@ SudokuFrame* SudokuApp::GetFrame()
 	return this->frame;
 }
 
+const SudokuSquare* SudokuApp::GetOriginalSquare() const
+{
+	return &this->originalSquare;
+}
+
 SudokuSquare* SudokuApp::GetSquare()
 {
 	return &this->square;
@@ -43,4 +48,9 @@ SudokuSquare* SudokuApp::GetSquare()
 Random* SudokuApp::GetRandom()
 {
 	return &this->random;
+}
+
+void SudokuApp::SetOriginalSquare()
+{
+	this->originalSquare.Copy(&this->square);
 }

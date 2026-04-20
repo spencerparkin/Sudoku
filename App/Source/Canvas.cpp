@@ -124,9 +124,18 @@ void SudokuCanvas::OnPaint(wxPaintEvent& event)
 	glLoadIdentity();
 
 	SudokuSquare* square = wxGetApp().GetSquare();
-	if (square)
+	const SudokuSquare* originalSquare = wxGetApp().GetOriginalSquare();
+	if (square && originalSquare)
 	{
-		square->Render(this->renderRect, &this->fontSystem);
+		square->Render(this->renderRect, &this->fontSystem, [originalSquare](int row, int col) -> HappyMath::Vector3
+			{
+				int value = -1;
+				originalSquare->GetValue(row, col, value);
+				if (value == -1)
+					return HappyMath::Vector3(1.0, 0.0, 0.0);
+
+				return HappyMath::Vector3(0.0, 0.0, 0.0);
+			});
 
 		if (this->hoverRow != -1 && this->hoverCol != -1)
 		{

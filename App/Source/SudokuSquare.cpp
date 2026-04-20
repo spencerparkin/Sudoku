@@ -13,7 +13,7 @@ SudokuSquare::SudokuSquare() : LatinSquare(9)
 {
 }
 
-void SudokuSquare::Render(const HappyMath::Rectangle& renderRect, FontSys::System* fontSystem) const
+void SudokuSquare::Render(const HappyMath::Rectangle& renderRect, FontSys::System* fontSystem, std::function<HappyMath::Vector3(int, int)> colorFunc) const
 {
 	glDisable(GL_DEPTH_TEST);
 
@@ -59,8 +59,6 @@ void SudokuSquare::Render(const HappyMath::Rectangle& renderRect, FontSys::Syste
 		glEnd();
 	}
 
-	glColor3f(0.0f, 0.0f, 0.0f);
-
 	for (int row = 0; row < this->size; row++)
 	{
 		for (int col = 0; col < this->size; col++)
@@ -68,6 +66,9 @@ void SudokuSquare::Render(const HappyMath::Rectangle& renderRect, FontSys::Syste
 			int value = this->matrix[row][col];
 			if (value < 0 || value > 9)
 				continue;
+
+			HappyMath::Vector3 color = colorFunc(row, col);
+			glColor3d(color.x, color.y, color.z);
 
 			std::string text = std::format("{}", value + 1);
 
