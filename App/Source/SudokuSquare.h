@@ -5,6 +5,8 @@
 #include "FontSystem.h"
 #include <wx/stream.h>
 
+class SudokuSolver;
+
 /**
  * This is a special case of 9x9 latin square where
  * each 3x3 sub-square also contains the numberse 0-9.
@@ -18,7 +20,7 @@ public:
 	virtual bool IsValid() const override;
 	virtual LatinSquare* Clone() const override;
 
-	void MakePuzzle(UU::Random& random);
+	void MakePuzzle(UU::Random& random, SudokuSolver* solver);
 	void Print() const;
 	void SaveToStream(wxOutputStream& outputStream) const;
 	bool LoadFromStream(wxInputStream& inputStream);

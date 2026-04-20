@@ -1,4 +1,5 @@
 #include "SudokuSquare.h"
+#include "SudokuSolver.h"
 #include "UltraUtilities/Random.h"
 #include <wx/wxcrtvararg.h>
 #include <wx/glcanvas.h>
@@ -225,20 +226,7 @@ void SudokuSquare::Print() const
 	}
 }
 
-// There is a stratagy for solving these puzzles algorithmically that
-// I have not yet tried.  It is as follows.  First, calculate the possibilities
-// for each empty square just as I currently am.  We then make passes
-// over all the empty squares trying to reduces those possibilities.
-// For example, for an empty square, it has a set of empty square
-// influences in its row.  If none of those influential squares can
-// take on a value that it itself holds as a possibility, then that
-// possibility must be the only one for the empty square.  We do this also, of course, for
-// all influences the empty square has in its column and its 3x3 sub-square.
-// Our algorithm here should make passes over the entire sudoku puzzle
-// until a single pass of the entire puzzle does not yield any reductions.
-// Are there any other reasonings we can make in this fasion?
-
-void SudokuSquare::MakePuzzle(UU::Random& random)
+void SudokuSquare::MakePuzzle(UU::Random& random, SudokuSolver* solver)
 {
 	this->RandomlyGenerate(random);
 
@@ -255,11 +243,14 @@ void SudokuSquare::MakePuzzle(UU::Random& random)
 
 	random.Shuffle(locationArray.GetBuffer(), locationArray.GetSize());
 
+	// STPTODO: We could do better here if we tried to remove more numbers.
+	//          If removing a number causes the solver to fail, then try to
+	//          remove some other number.  Remove as much as we possibly can.
 	int i = 0;
 	while (true)
 	{
 		SudokuSquare* sudokuSquare = (SudokuSquare*)this->Clone();
-		bool solved = sudokuSquare->CompleteSquare(true);		// STPTODO: Replace with smart or dumb solver to set difficulty level.
+		bool solved = solver->Solve(sudokuSquare);
 		delete sudokuSquare;
 
 		if (solved)

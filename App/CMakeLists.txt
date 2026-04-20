@@ -9,6 +9,8 @@ set(SUDOKU_APP_SOURCES
 	Source/Canvas.h
 	Source/SudokuSquare.cpp
 	Source/SudokuSquare.h
+	Source/SudokuSolver.cpp
+	Source/SudokuSolver.h
 	Source/Random.cpp
 	Source/Random.h
 )

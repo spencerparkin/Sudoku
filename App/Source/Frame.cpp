@@ -2,9 +2,12 @@
 #include "Canvas.h"
 #include "App.h"
 #include "SudokuSquare.h"
+#include "SudokuSolver.h"
 #include <wx/sizer.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
+#include <wx/choicdlg.h>
+#include <memory>
 
 SudokuFrame::SudokuFrame(const wxPoint& position, const wxSize& size) : wxFrame(nullptr, wxID_ANY, wxT("Sudoku"), position, size), timer(this, ID_Timer)
 {
@@ -48,7 +51,22 @@ void SudokuFrame::OnNewPuzzle(wxCommandEvent& event)
 	if (!square)
 		return;
 
-	square->MakePuzzle(*wxGetApp().GetRandom());
+	wxArrayString choiceArray;
+	choiceArray.Add("Easy");
+	choiceArray.Add("Hard");
+
+	wxSingleChoiceDialog choiceDialog(this, wxT("Please select difficulty level."), wxT("Difficulty Level"), choiceArray);
+	if (choiceDialog.ShowModal() != wxID_OK)
+		return;
+
+	std::unique_ptr<SudokuSolver> solver;
+
+	if (choiceDialog.GetSelection() == 0)
+		solver.reset(new SimpleSudokuSolver());
+	else
+		solver.reset(new AdvancedSudokuSolver());
+
+	square->MakePuzzle(*wxGetApp().GetRandom(), solver.get());
 }
 
 void SudokuFrame::OnAbout(wxCommandEvent& event)
