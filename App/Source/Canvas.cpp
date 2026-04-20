@@ -16,6 +16,7 @@ SudokuCanvas::SudokuCanvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attr
 	this->Bind(wxEVT_PAINT, &SudokuCanvas::OnPaint, this);
 	this->Bind(wxEVT_SIZE, &SudokuCanvas::OnResize, this);
 	this->Bind(wxEVT_MOTION, &SudokuCanvas::OnMouseMotion, this);
+	this->Bind(wxEVT_KEY_DOWN, &SudokuCanvas::OnKeyEvent, this);
 
 	this->worldRect.minCorner = HappyMath::Vector2(0.0, 0.0);
 	this->worldRect.maxCorner = HappyMath::Vector2(100.0, 100.0);
@@ -32,6 +33,36 @@ SudokuCanvas::SudokuCanvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attr
 	delete this->context;
 
 	this->fontSystem.Finalize();
+}
+
+void SudokuCanvas::OnKeyEvent(wxKeyEvent& event)
+{
+	SudokuSquare* square = wxGetApp().GetSquare();
+	if (!square)
+		return;
+
+	if (this->hoverRow == -1 || this->hoverCol == -1)
+		return;
+
+	int keyCode = event.GetKeyCode();
+
+	if (std::isdigit(keyCode))
+	{
+		int value = keyCode - '0';
+		if (1 <= value && value <= 9)
+		{
+			value--;
+
+			if (square->IsPossibleValueForLocation(this->hoverRow, this->hoverCol, value))
+			{
+				square->SetValue(this->hoverRow, this->hoverCol, value);
+			}
+		}
+	}
+	else if (keyCode == WXK_DELETE)
+	{
+		square->SetValue(this->hoverRow, this->hoverCol, -1);
+	}
 }
 
 void SudokuCanvas::OnMouseMotion(wxMouseEvent& event)

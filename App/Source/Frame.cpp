@@ -123,6 +123,9 @@ void SudokuFrame::OnSolvePuzzle(wxCommandEvent& event)
 
 	square->Copy(wxGetApp().GetOriginalSquare());
 
+	if (square->GetNumSetValues() == 0)
+		return;
+
 	AdvancedSudokuSolver solver;
 	bool solved = solver.Solve(square);
 	if (!solved)

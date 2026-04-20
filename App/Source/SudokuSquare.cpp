@@ -209,7 +209,7 @@ void SudokuSquare::Print() const
 	return true;
 }
 
-/*virtual*/ void SudokuSquare::BumpIllegalValuesForLocation(int targetRow, int targetCol, UU::DArray<int>& countArray)
+/*virtual*/ void SudokuSquare::BumpIllegalValuesForLocation(int targetRow, int targetCol, UU::DArray<int>& countArray) const
 {
 	LatinSquare::BumpIllegalValuesForLocation(targetRow, targetCol, countArray);
 
@@ -227,6 +227,9 @@ void SudokuSquare::Print() const
 	}
 }
 
+// STPTODO: Add option to make a puzzle that exhibits symmetry.  You can do this
+//          by requiring symmetry with each removal and by having each removal
+//          remove 2 or 4 values at a time.
 void SudokuSquare::MakePuzzle(UU::Random& random, SudokuSolver* solver, int puzzleSizeLowerBound)
 {
 	this->RandomlyGenerate(random);

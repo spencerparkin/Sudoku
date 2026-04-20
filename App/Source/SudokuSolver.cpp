@@ -114,11 +114,8 @@ bool AdvancedSudokuSolver::CanAnyEmptyRowNeighborTakeOnValue(SudokuSquare* squar
 		if (value != -1)
 			continue;
 
-		UU::DArray<int> possibleValuesArray;
-		square->GetAllPossibleValuesForLocation(targetRow, col, possibleValuesArray);
-		for (int i = 0; i < (int)possibleValuesArray.GetSize(); i++)
-			if (possibleValuesArray[i] == possibleValue)
-				return true;
+		if (square->IsPossibleValueForLocation(targetRow, col, possibleValue))
+			return true;
 	}
 
 	return false;
@@ -136,11 +133,8 @@ bool AdvancedSudokuSolver::CanAnyEmptyColumnNeighborTakeOnValue(SudokuSquare* sq
 		if (value != -1)
 			continue;
 
-		UU::DArray<int> possibleValuesArray;
-		square->GetAllPossibleValuesForLocation(row, targetCol, possibleValuesArray);
-		for (int i = 0; i < (int)possibleValuesArray.GetSize(); i++)
-			if (possibleValuesArray[i] == possibleValue)
-				return true;
+		if (square->IsPossibleValueForLocation(row, targetCol, possibleValue))
+			return true;
 	}
 
 	return false;
@@ -163,11 +157,8 @@ bool AdvancedSudokuSolver::CanAnyEmpty3x3SubSquareNeighborTakeOnValue(SudokuSqua
 			if (value != -1)
 				continue;
 
-			UU::DArray<int> possibleValuesArray;
-			square->GetAllPossibleValuesForLocation(row, col, possibleValuesArray);
-			for (int i = 0; i < (int)possibleValuesArray.GetSize(); i++)
-				if (possibleValuesArray[i] == possibleValue)
-					return true;
+			if (square->IsPossibleValueForLocation(row, col, possibleValue))
+				return true;
 		}
 	}
 

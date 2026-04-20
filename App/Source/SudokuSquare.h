@@ -31,5 +31,5 @@ public:
 
 protected:
 	virtual bool CanPlaceValueAtTargetLocation(int targetRow, int targetCol, int value) override;
-	virtual void BumpIllegalValuesForLocation(int targetRow, int targetCol, UU::DArray<int>& countArray) override;
+	virtual void BumpIllegalValuesForLocation(int targetRow, int targetCol, UU::DArray<int>& countArray) const override;
 };

@@ -17,6 +17,7 @@ private:
 	void OnPaint(wxPaintEvent& event);
 	void OnResize(wxSizeEvent& event);
 	void OnMouseMotion(wxMouseEvent& event);
+	void OnKeyEvent(wxKeyEvent& event);
 
 	HappyMath::Vector2 MousePosToWorldPos(const wxPoint& mousePos) const;
 	bool CalcMatrixLocationFromWorldPos(const HappyMath::Vector2& worldPos, int& row, int& col) const;
