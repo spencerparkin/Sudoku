@@ -43,6 +43,7 @@ void SudokuCanvas::OnMouseMotion(wxMouseEvent& event)
 	HappyMath::Vector2 worldPos = this->MousePosToWorldPos(event.GetPosition());
 	if (this->CalcMatrixLocationFromWorldPos(worldPos, this->hoverRow, this->hoverCol))
 	{
+#if 0
 		wxString text;
 
 		int value = -1;
@@ -52,16 +53,17 @@ void SudokuCanvas::OnMouseMotion(wxMouseEvent& event)
 			UU::DArray<int> possibleValuesArray;
 			square->GetAllPossibleValuesForLocation(this->hoverRow, this->hoverCol, possibleValuesArray);
 
-			text = wxT("Possible values: ");
+			text = wxString::Format(wxT("(%d, %d): Possible values: "), this->hoverRow, this->hoverCol);
 			for (int i = 0; i < (int)possibleValuesArray.GetSize(); i++)
 			{
-				text += wxString::Format("%d", possibleValuesArray[i] + 1);
+				text += wxString::Format(wxT("%d"), possibleValuesArray[i] + 1);
 				if (i + 1 < (int)possibleValuesArray.GetSize())
 					text += wxT(", ");
 			}
 		}
 
 		wxGetApp().GetFrame()->SetStatusText(text);
+#endif
 	}
 }
 

@@ -111,7 +111,7 @@ bool AdvancedSudokuSolver::CanAnyEmptyRowNeighborTakeOnValue(SudokuSquare* squar
 
 		int value = -1;
 		square->GetValue(targetRow, col, value);
-		if (value == -1)
+		if (value != -1)
 			continue;
 
 		UU::DArray<int> possibleValuesArray;
@@ -133,7 +133,7 @@ bool AdvancedSudokuSolver::CanAnyEmptyColumnNeighborTakeOnValue(SudokuSquare* sq
 
 		int value = -1;
 		square->GetValue(row, targetCol, value);
-		if (value == -1)
+		if (value != -1)
 			continue;
 
 		UU::DArray<int> possibleValuesArray;
@@ -160,7 +160,7 @@ bool AdvancedSudokuSolver::CanAnyEmpty3x3SubSquareNeighborTakeOnValue(SudokuSqua
 
 			int value = -1;
 			square->GetValue(row, targetCol, value);
-			if (value == -1)
+			if (value != -1)
 				continue;
 
 			UU::DArray<int> possibleValuesArray;

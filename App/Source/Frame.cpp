@@ -71,15 +71,15 @@ void SudokuFrame::OnNewPuzzle(wxCommandEvent& event)
 	{
 	case 0:
 		solver.reset(new SimpleSudokuSolver());
-		puzzleSizeLowerBound = 40;
+		puzzleSizeLowerBound = 45;
 		break;
 	case 1:
 		solver.reset(new SimpleSudokuSolver());
-		puzzleSizeLowerBound = 20;
+		puzzleSizeLowerBound = 0;
 		break;
 	case 2:
 		solver.reset(new AdvancedSudokuSolver());
-		puzzleSizeLowerBound = 15;
+		puzzleSizeLowerBound = 0;
 		break;
 	}
 
