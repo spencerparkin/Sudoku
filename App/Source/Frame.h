@@ -20,6 +20,7 @@ public:
 		ID_SolvePuzzle,
 		ID_Exit,
 		ID_About,
+		ID_GiveHint,
 		ID_Timer
 	};
 
@@ -29,6 +30,7 @@ private:
 	void OnNewPuzzle(wxCommandEvent& event);
 	void OnSolvePuzzle(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
+	void OnGiveHint(wxCommandEvent& event);
 	void OnExit(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& event);
 

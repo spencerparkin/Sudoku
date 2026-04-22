@@ -24,9 +24,7 @@ public:
 	virtual ~SimpleSudokuSolver();
 
 	virtual bool Solve(SudokuSquare* square) override;
-
-protected:
-	virtual bool ResolveAnyValue(SudokuSquare* square);
+	virtual bool ResolveAnyValue(SudokuSquare* square, int* resolvedRow = nullptr, int* resolvedCol = nullptr);
 };
 
 /**
@@ -37,9 +35,9 @@ class AdvancedSudokuSolver : public SimpleSudokuSolver
 public:
 	AdvancedSudokuSolver();
 	virtual ~AdvancedSudokuSolver();
+	virtual bool ResolveAnyValue(SudokuSquare* square, int* resolvedRow = nullptr, int* resolvedCol = nullptr);
 
 protected:
-	virtual bool ResolveAnyValue(SudokuSquare* square);
 
 	bool CanAnyEmptyRowNeighborTakeOnValue(SudokuSquare* square, int targetRow, int targetCol, int possibleValue);
 	bool CanAnyEmptyColumnNeighborTakeOnValue(SudokuSquare* square, int targetRow, int targetCol, int possibleValue);

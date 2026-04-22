@@ -19,6 +19,8 @@ SudokuFrame::SudokuFrame(const wxPoint& position, const wxSize& size) : wxFrame(
 	gameMenu->Append(new wxMenuItem(gameMenu, ID_Exit, wxT("Exit"), wxT("Go do something else with your life.")));
 
 	wxMenu* helpMenu = new wxMenu();
+	helpMenu->Append(new wxMenuItem(helpMenu, ID_GiveHint, wxT("Give Hint"), wxT("Have the computer see if it can find a move.")));
+	helpMenu->AppendSeparator();
 	helpMenu->Append(new wxMenuItem(helpMenu, ID_About, wxT("About"), wxT("Show the about box.")));
 
 	wxMenuBar* menuBar = new wxMenuBar();
@@ -38,6 +40,7 @@ SudokuFrame::SudokuFrame(const wxPoint& position, const wxSize& size) : wxFrame(
 	this->Bind(wxEVT_MENU, &SudokuFrame::OnNewPuzzle, this, ID_NewPuzzle);
 	this->Bind(wxEVT_MENU, &SudokuFrame::OnSolvePuzzle, this, ID_SolvePuzzle);
 	this->Bind(wxEVT_MENU, &SudokuFrame::OnAbout, this, ID_About);
+	this->Bind(wxEVT_MENU, &SudokuFrame::OnGiveHint, this, ID_GiveHint);
 	this->Bind(wxEVT_MENU, &SudokuFrame::OnExit, this, ID_Exit);
 	this->Bind(wxEVT_TIMER, &SudokuFrame::OnTimer, this, ID_Timer);
 
@@ -98,6 +101,28 @@ void SudokuFrame::OnAbout(wxCommandEvent& event)
 	info.SetCopyright("(C) 2026 Spencer T. Parkin <spencer.parkin@proton.me>");
 
 	wxAboutBox(info);
+}
+
+void SudokuFrame::OnGiveHint(wxCommandEvent& event)
+{
+	SudokuSquare* square = wxGetApp().GetSquare();
+	if (!square)
+		return;
+
+	std::unique_ptr<SudokuSquare> squareCopy((SudokuSquare*)square->Clone());
+
+	AdvancedSudokuSolver solver;
+	int resolvedRow = -1;
+	int resolvedCol = -1;
+	if (!solver.ResolveAnyValue(squareCopy.get(), &resolvedRow, &resolvedCol))
+		wxMessageBox(wxT("Failed to find move!"), wxT("Oops!"), wxOK | wxICON_ERROR, this);
+	else
+	{
+		int resolvedValue = -1;
+		squareCopy->GetValue(resolvedRow, resolvedCol, resolvedValue);
+		wxString message = wxString::Format(wxT("Consider placing %d at row %d, column %d."), resolvedValue + 1, resolvedRow + 1, resolvedCol + 1);
+		wxMessageBox(message, wxT("Hint!"), wxOK | wxICON_INFORMATION, this);
+	}
 }
 
 void SudokuFrame::SetStatusText(const wxString& text)

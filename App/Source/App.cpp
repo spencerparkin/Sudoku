@@ -1,5 +1,7 @@
 #include "App.h"
 #include "Frame.h"
+#include <wx/filename.h>
+#include <wx/wfstream.h>
 
 wxIMPLEMENT_APP(SudokuApp);
 
@@ -21,6 +23,24 @@ SudokuApp::SudokuApp()
 	this->random.SetSeed(randomDevice());
 
 	this->square.Clear();
+	this->originalSquare.Clear();
+
+	wxString puzzleFile = wxFileName::GetTempDir() + wxT("/SudokuPuzzle.bin");
+	if (wxFileExists(puzzleFile))
+	{
+		wxFile file(puzzleFile, wxFile::read);
+		if (file.IsOpened())
+		{
+			wxFileInputStream fileStream(file);
+			if (!this->square.LoadFromStream(fileStream) || !this->originalSquare.LoadFromStream(fileStream))
+			{
+				this->square.Clear();
+				this->originalSquare.Clear();
+			}
+
+			file.Close();
+		}
+	}
 
 	this->frame = new SudokuFrame(wxDefaultPosition, wxSize(1600, 1200));
 	this->frame->Show();
@@ -30,6 +50,16 @@ SudokuApp::SudokuApp()
 
 /*virtual*/ int SudokuApp::OnExit()
 {
+	wxString puzzleFile = wxFileName::GetTempDir() + wxT("/SudokuPuzzle.bin");
+	wxFile file(puzzleFile, wxFile::write);
+	if (file.IsOpened())
+	{
+		wxFileOutputStream fileStream(file);
+		this->square.SaveToStream(fileStream);
+		this->originalSquare.SaveToStream(fileStream);
+		file.Close();
+	}
+
 	return 0;
 }
 

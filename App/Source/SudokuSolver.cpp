@@ -34,7 +34,7 @@ SimpleSudokuSolver::SimpleSudokuSolver()
 	return true;
 }
 
-/*virtual*/ bool SimpleSudokuSolver::ResolveAnyValue(SudokuSquare* square)
+/*virtual*/ bool SimpleSudokuSolver::ResolveAnyValue(SudokuSquare* square, int* resolvedRow /*= nullptr*/, int* resolvedCol /*= nullptr*/)
 {
 	for (int row = 0; row < square->GetSize(); row++)
 	{
@@ -50,6 +50,13 @@ SimpleSudokuSolver::SimpleSudokuSolver()
 			if (possibleValuesArray.GetSize() == 1)
 			{
 				square->SetValue(row, col, possibleValuesArray[0]);
+
+				if (resolvedRow && resolvedCol)
+				{
+					*resolvedRow = row;
+					*resolvedCol = col;
+				}
+
 				return true;
 			}
 		}
@@ -68,9 +75,9 @@ AdvancedSudokuSolver::AdvancedSudokuSolver()
 {
 }
 
-/*virtual*/ bool AdvancedSudokuSolver::ResolveAnyValue(SudokuSquare* square)
+/*virtual*/ bool AdvancedSudokuSolver::ResolveAnyValue(SudokuSquare* square, int* resolvedRow /*= nullptr*/, int* resolvedCol /*= nullptr*/)
 {
-	if (SimpleSudokuSolver::ResolveAnyValue(square))
+	if (SimpleSudokuSolver::ResolveAnyValue(square, resolvedRow, resolvedCol))
 		return true;
 
 	for (int row = 0; row < square->GetSize(); row++)
@@ -93,6 +100,13 @@ AdvancedSudokuSolver::AdvancedSudokuSolver()
 					!this->CanAnyEmpty3x3SubSquareNeighborTakeOnValue(square, row, col, possibleValue))
 				{
 					square->SetValue(row, col, possibleValue);
+
+					if (resolvedRow && resolvedCol)
+					{
+						*resolvedRow = row;
+						*resolvedCol = col;
+					}
+
 					return true;
 				}
 			}
