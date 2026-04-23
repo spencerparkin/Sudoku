@@ -8,6 +8,7 @@
 #include <functional>
 
 class SudokuSolver;
+class SudokuValueRemover;
 
 /**
  * This is a special case of 9x9 latin square where
@@ -22,7 +23,7 @@ public:
 	virtual bool IsValid() const override;
 	virtual LatinSquare* Clone() const override;
 
-	void MakePuzzle(UU::Random& random, SudokuSolver* solver, int puzzleSizeLowerBound);
+	void MakePuzzle(UU::Random& random, SudokuSolver* solver, SudokuValueRemover* remover, int puzzleSizeLowerBound);
 	void Print() const;
 	void SaveToStream(wxOutputStream& outputStream) const;
 	bool LoadFromStream(wxInputStream& inputStream);

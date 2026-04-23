@@ -3,6 +3,7 @@
 #include "App.h"
 #include "SudokuSquare.h"
 #include "SudokuSolver.h"
+#include "SudokuValueRemover.h"
 #include <wx/sizer.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
@@ -57,21 +58,30 @@ void SudokuFrame::OnNewPuzzle(wxCommandEvent& event)
 	if (!square)
 		return;
 
-	wxArrayString choiceArray;
-	choiceArray.Add("Easy");
-	choiceArray.Add("Medium");
-	choiceArray.Add("Hard");
+	wxArrayString difficultyChoiceArray;
+	difficultyChoiceArray.Add("Easy");
+	difficultyChoiceArray.Add("Medium");
+	difficultyChoiceArray.Add("Hard");
 
-	wxSingleChoiceDialog choiceDialog(this, wxT("Please select difficulty level."), wxT("Difficulty Level"), choiceArray);
-	if (choiceDialog.ShowModal() != wxID_OK)
+	wxSingleChoiceDialog difficultyChoiceDialog(this, wxT("Please select difficulty level."), wxT("Difficulty Level"), difficultyChoiceArray);
+	if (difficultyChoiceDialog.ShowModal() != wxID_OK)
+		return;
+
+	wxArrayString patternChoiceArray;
+	patternChoiceArray.Add("Completely Random");
+	patternChoiceArray.Add("Random, but 180-degree Symmetric");
+	patternChoiceArray.Add("Random, but 90-degree Symmetric");
+
+	wxSingleChoiceDialog patternChoiceDialog(this, wxT("Please select pattern."), wxT("Pattern"), patternChoiceArray);
+	if (patternChoiceDialog.ShowModal() != wxID_OK)
 		return;
 
 	std::unique_ptr<SudokuSolver> solver;
+	std::unique_ptr<SudokuValueRemover> remover;
 	int puzzleSizeLowerBound = 0;
 
-	int choice = choiceDialog.GetSelection();
-	
-	switch (choice)
+	int difficultyChoice = difficultyChoiceDialog.GetSelection();
+	switch (difficultyChoice)
 	{
 	case 0:
 		solver.reset(new SimpleSudokuSolver());
@@ -87,7 +97,21 @@ void SudokuFrame::OnNewPuzzle(wxCommandEvent& event)
 		break;
 	}
 
-	square->MakePuzzle(*wxGetApp().GetRandom(), solver.get(), puzzleSizeLowerBound);
+	int patternChoice = patternChoiceDialog.GetSelection();
+	switch (patternChoice)
+	{
+	case 0:
+		remover.reset(new RandomSingleValueRemover());
+		break;
+	case 1:
+		remover.reset(new Random180DegreeSymmetryValueRemover());
+		break;
+	case 2:
+		remover.reset(new Random90DegreeSymmetryValueRemover());
+		break;
+	}
+
+	square->MakePuzzle(*wxGetApp().GetRandom(), solver.get(), remover.get(), puzzleSizeLowerBound);
 
 	wxGetApp().SetOriginalSquare();
 }

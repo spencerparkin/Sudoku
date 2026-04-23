@@ -1,5 +1,6 @@
 #include "SudokuSquare.h"
 #include "SudokuSolver.h"
+#include "SudokuValueRemover.h"
 #include "UltraUtilities/Random.h"
 #include <wx/wxcrtvararg.h>
 #include <wx/glcanvas.h>
@@ -227,46 +228,18 @@ void SudokuSquare::Print() const
 	}
 }
 
-// STPTODO: Add option to make a puzzle that exhibits symmetry.  You can do this
-//          by requiring symmetry with each removal and by having each removal
-//          remove 2 or 4 values at a time.
-void SudokuSquare::MakePuzzle(UU::Random& random, SudokuSolver* solver, int puzzleSizeLowerBound)
+void SudokuSquare::MakePuzzle(UU::Random& random, SudokuSolver* solver, SudokuValueRemover* remover, int puzzleSizeLowerBound)
 {
 	this->RandomlyGenerate(random);
 
-	struct Location
+	while (this->GetNumSetValues() - remover->GetNumValuesRemovedPerStep() >= puzzleSizeLowerBound)
 	{
-		int row, col;
-		int value;
-	};
-
-	while (true)
-	{
-		UU::DArray<Location> locationArray;
-
-		for (int row = 0; row < this->size; row++)
-		{
-			for (int col = 0; col < this->size; col++)
-			{
-				int value = this->matrix[row][col];
-				if (value == -1)
-					continue;
-
-				locationArray.Push({ row, col, value });
-			}
-		}
-
-		if (locationArray.GetSize() <= puzzleSizeLowerBound)
-			return;
-
-		random.Shuffle(locationArray.GetBuffer(), locationArray.GetSize());
-
+		int numSteps = remover->RegeneratePossibleRemovalSteps(this, random);
 		int numSetValues = this->GetNumSetValues();
 
-		for (int i = 0; i < (int)locationArray.GetSize(); i++)
+		for (int i = 0; i < numSteps; i++)
 		{
-			const Location& location = locationArray[i];
-			this->matrix[location.row][location.col] = -1;
+			remover->DoRemovalStep(i, this);
 
 			SudokuSquare* sudokuSquare = (SudokuSquare*)this->Clone();
 			bool solved = solver->Solve(sudokuSquare);
@@ -275,7 +248,7 @@ void SudokuSquare::MakePuzzle(UU::Random& random, SudokuSolver* solver, int puzz
 			if (solved)
 				break;
 
-			this->matrix[location.row][location.col] = location.value;
+			remover->UndoRemovalStep(i, this);
 		}
 
 		if (this->GetNumSetValues() == numSetValues)

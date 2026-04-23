@@ -11,6 +11,8 @@ set(SUDOKU_APP_SOURCES
 	Source/SudokuSquare.h
 	Source/SudokuSolver.cpp
 	Source/SudokuSolver.h
+	Source/SudokuValueRemover.cpp
+	Source/SudokuValueRemover.h
 	Source/Random.cpp
 	Source/Random.h
 )
