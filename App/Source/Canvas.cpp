@@ -8,6 +8,8 @@ int SudokuCanvas::attributeList[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, 0 };
 
 SudokuCanvas::SudokuCanvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList)
 {
+	this->showPossibilities = false;
+
 	this->hoverRow = -1;
 	this->hoverCol = -1;
 
@@ -74,27 +76,28 @@ void SudokuCanvas::OnMouseMotion(wxMouseEvent& event)
 	HappyMath::Vector2 worldPos = this->MousePosToWorldPos(event.GetPosition());
 	if (this->CalcMatrixLocationFromWorldPos(worldPos, this->hoverRow, this->hoverCol))
 	{
-#if 0
 		wxString text;
 
-		int value = -1;
-		square->GetValue(this->hoverRow, this->hoverCol, value);
-		if (value == -1)
+		if (this->showPossibilities)
 		{
-			UU::DArray<int> possibleValuesArray;
-			square->GetAllPossibleValuesForLocation(this->hoverRow, this->hoverCol, possibleValuesArray);
-
-			text = wxString::Format(wxT("(%d, %d): Possible values: "), this->hoverRow, this->hoverCol);
-			for (int i = 0; i < (int)possibleValuesArray.GetSize(); i++)
+			int value = -1;
+			square->GetValue(this->hoverRow, this->hoverCol, value);
+			if (value == -1)
 			{
-				text += wxString::Format(wxT("%d"), possibleValuesArray[i] + 1);
-				if (i + 1 < (int)possibleValuesArray.GetSize())
-					text += wxT(", ");
+				UU::DArray<int> possibleValuesArray;
+				square->GetAllPossibleValuesForLocation(this->hoverRow, this->hoverCol, possibleValuesArray);
+
+				text = wxString::Format(wxT("(%d, %d): Possible values: "), this->hoverRow + 1, this->hoverCol + 1);
+				for (int i = 0; i < (int)possibleValuesArray.GetSize(); i++)
+				{
+					text += wxString::Format(wxT("%d"), possibleValuesArray[i] + 1);
+					if (i + 1 < (int)possibleValuesArray.GetSize())
+						text += wxT(", ");
+				}
 			}
 		}
 
 		wxGetApp().GetFrame()->SetStatusText(text);
-#endif
 	}
 }
 
@@ -208,4 +211,14 @@ void SudokuCanvas::OnResize(wxSizeEvent& event)
 	this->renderRect = this->worldRect;
 	this->renderRect.ScaleVertically(0.9);
 	this->renderRect.ScaleHorizontally(0.9);
+}
+
+void SudokuCanvas::SetShowPossibilities(bool showPossibilities)
+{
+	this->showPossibilities = showPossibilities;
+}
+
+bool SudokuCanvas::GetShowPossibilities() const
+{
+	return this->showPossibilities;
 }

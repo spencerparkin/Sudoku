@@ -13,6 +13,9 @@ public:
 	SudokuCanvas(wxWindow* parent);
 	virtual ~SudokuCanvas();
 
+	void SetShowPossibilities(bool showPossibilities);
+	bool GetShowPossibilities() const;
+
 private:
 	void OnPaint(wxPaintEvent& event);
 	void OnResize(wxSizeEvent& event);
@@ -29,4 +32,5 @@ private:
 	HappyMath::Rectangle renderRect;
 	FontSys::System fontSystem;
 	int hoverRow, hoverCol;
+	bool showPossibilities;
 };
