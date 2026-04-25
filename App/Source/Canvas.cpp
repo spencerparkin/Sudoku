@@ -46,6 +46,11 @@ void SudokuCanvas::OnKeyEvent(wxKeyEvent& event)
 	if (this->hoverRow == -1 || this->hoverCol == -1)
 		return;
 
+	int originalValue = -1;
+	wxGetApp().GetOriginalSquare()->GetValue(this->hoverRow, this->hoverCol, originalValue);
+	if (originalValue != -1)
+		return;
+	
 	int keyCode = event.GetKeyCode();
 
 	if (std::isdigit(keyCode))
@@ -55,14 +60,9 @@ void SudokuCanvas::OnKeyEvent(wxKeyEvent& event)
 		{
 			value--;
 
-			int originalValue = -1;
-			wxGetApp().GetOriginalSquare()->GetValue(this->hoverRow, this->hoverCol, originalValue);
-			if (originalValue == -1)
+			if (square->IsPossibleValueForLocation(this->hoverRow, this->hoverCol, value))
 			{
-				if (square->IsPossibleValueForLocation(this->hoverRow, this->hoverCol, value))
-				{
-					square->SetValue(this->hoverRow, this->hoverCol, value);
-				}
+				square->SetValue(this->hoverRow, this->hoverCol, value);
 			}
 		}
 	}
