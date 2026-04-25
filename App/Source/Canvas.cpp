@@ -55,9 +55,14 @@ void SudokuCanvas::OnKeyEvent(wxKeyEvent& event)
 		{
 			value--;
 
-			if (square->IsPossibleValueForLocation(this->hoverRow, this->hoverCol, value))
+			int originalValue = -1;
+			wxGetApp().GetOriginalSquare()->GetValue(this->hoverRow, this->hoverCol, originalValue);
+			if (originalValue == -1)
 			{
-				square->SetValue(this->hoverRow, this->hoverCol, value);
+				if (square->IsPossibleValueForLocation(this->hoverRow, this->hoverCol, value))
+				{
+					square->SetValue(this->hoverRow, this->hoverCol, value);
+				}
 			}
 		}
 	}

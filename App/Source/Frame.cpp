@@ -10,6 +10,7 @@
 #include <wx/choicdlg.h>
 #include <wx/aboutdlg.h>
 #include <memory>
+#include <math.h>
 
 SudokuFrame::SudokuFrame(const wxPoint& position, const wxSize& size) : wxFrame(nullptr, wxID_ANY, wxT("Sudoku"), position, size), timer(this, ID_Timer)
 {
